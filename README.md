@@ -4,6 +4,26 @@ Hands-on test scripts and reference docs for the Nutanix REST API v4, built and 
 
 ---
 
+> **⚠️ Version Disclaimer**
+>
+> All code, endpoints, and test results in this repository were verified on a specific Prism Central and AOS version. API namespace availability, endpoint paths, and response schemas **vary across PC and AOS releases**. What works on one build may return `404` or behave differently on another.
+>
+> | Component | Tested Version | Minimum Required |
+> |---|---|---|
+> | Prism Central | pc.2024.3 (9.x series) | pc.2024.3 |
+> | AOS | 7.0 | 7.0 |
+> | `networking` namespace | `v4.0.b1` (GA) | pc.2024.3 / AOS 7.0 |
+> | `vmm` namespace | `v4.0.b1` (GA) | pc.2024.3 / AOS 7.0 |
+> | `iam` v4 projects | Not available on tested build | pc.2024.3+ (check your build) |
+> | v3 API (`/api/nutanix/v3/`) | Fully available | pc.5.x+ |
+> | v1 REST (`/PrismGateway/services/rest/v1/`) | Fully available | pc.5.x+ |
+>
+> **Before running any script:** use the version probe steps in each test file to confirm which API versions your cluster supports. Never hardcode a version without probing first.
+>
+> Nutanix v4 API GA was announced with **pc.2024.3 / AOS 7.0**. Earlier PC builds (pc.2023.x) may only have alpha (`v4.0.a1`) or beta (`v4.0.b1`) versions with limited namespace support.
+
+---
+
 ## What's in This Repo
 
 | File | What it covers |

@@ -10,13 +10,14 @@ Hands-on test scripts and reference docs for the Nutanix REST API v4, built and 
 >
 > **Tested Environment**
 >
-> | Component | Tested Version |
-> |---|---|
-> | Prism Central | `pc.7.3.1.3` |
-> | AOS | `7.3` |
-> | AHV | `10.3` |
-> | NCC | `ncc-5.2.0` |
-> | Hardware | Nutanix NX-3170-G8 |
+> | Component | Tested Version | Notes |
+> |---|---|---|
+> | Prism Central | `pc.7.3.1.3` | `el8.5-release-ganges-7.3.1.3` |
+> | AOS (RNO-POC012) | `7.3` | Primary PE cluster |
+> | AOS (DR) | `7.3` | DR PE cluster |
+> | PC Nodes | 1 | Single-node PC |
+> | Storage Type | All-Flash | |
+> | Architecture | X86_64 | |
 >
 > **API Version Availability (confirmed on this build)**
 >
@@ -119,15 +120,16 @@ Terminal statuses: `SUCCEEDED`, `FAILED`, `CANCELLED`.
 
 All tests run against a live Prism Central cluster.
 
-### Test 1 — VPC List (`test-call-project.md`)
+### Test 1 — VPC & Projects (`test-call-project.md`, `vpc-and-projects-api.md`)
 
 | Step | API | Result |
 |---|---|---|
-| Version probe | `networking/v4.x` | `v4.0.b1` → `v4.1` ✅ / `v4.0.a1` ❌ |
-| List VPCs | `GET /api/networking/v4.0.b1/config/vpcs` | 1 VPC found: `VPN-for-Test` |
-| v4 Projects probe | `iam/v4.x/authz/projects` | All 404 — not available on this build |
-| List Projects | `POST /api/nutanix/v3/projects/list` | 2 projects: `Project-VPC`, `NTNX` |
-| VPC↔Project link | via `vpc_reference_list` | `Project-VPC` → `VPN-for-Test` confirmed |
+| Version probe | `networking/v4.x` | `v4.0.b1` → `v4.1` ✅ / `v4.0.a1` ❌ 404 |
+| List VPCs | `GET /api/networking/v4.0/config/vpcs` | 1 VPC: **VPN-for-Test** (`extId: 71f5d1e9-...`) |
+| VPC type | — | REGULAR (NAT), SNAT IPs: `10.8.23.23/24`, DNS: `1.1.1.1` |
+| v4 Projects probe | `iam/v4.x/authz/projects` | All versions 404 — not available on PC 7.3.1.3 |
+| List Projects (v3) | `POST /api/nutanix/v3/projects/list` | 2 projects: **Project-VPC**, **NTNX** |
+| VPC↔Project link | via `vpc_reference_list` | `Project-VPC` → `VPN-for-Test` ✅ confirmed |
 
 ### Test 2 — VM Information (`test-call-vm-info.md`)
 
@@ -187,8 +189,8 @@ curl -sk -u "$AUTH" \
 
 | Limitation | Workaround |
 |---|---|
-| `networking/v4.0.a1` not available | Use `v4.0.b1` |
-| `iam/v4.x/authz/projects` returns 404 | Use v3: `POST /api/nutanix/v3/projects/list` |
+| `networking/v4.0.a1` not available | Use `v4.0.b1` or `v4.0` |
+| `iam/v4.x/authz/projects` returns 404 on PC 7.3.1.3 | Use v3: `POST /api/nutanix/v3/projects/list` |
 | `vmm/v4.0.b2`+ not available | Use `vmm/v4.0.b1` |
 | v4 VM stats endpoint errors without `$select` | Use v1: `/PrismGateway/services/rest/v1/vms/{uuid}` |
 | Stats metrics with value `-1` | Not available — VM may be off or NGT not installed |
